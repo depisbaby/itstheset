@@ -9,7 +9,7 @@ let clue = "";
 let numberOfPlayersToday = 0;
 
 const validWords = new Set(
-  fs.readFileSync('valid_words.txt', 'utf8')
+  fs.readFileSync(path.join(__dirname, 'valid_words.txt'), 'utf8')
     .split(/\s+/)
 );
 
@@ -53,7 +53,7 @@ function getExplanation(answer){ //TODO
 }
 
 function newPuzzle(){
-    const lines = fs.readFileSync("puzzles.txt", "utf8")
+    const lines = fs.readFileSync(path.join(__dirname, 'puzzles.txt'), "utf8")
     .split(/\r?\n/)
     .filter(line => line.length > 0);
     const randomLine = lines[Math.floor(Math.random() * lines.length)];
@@ -91,13 +91,6 @@ app.post("/api/answer", (req, res) => {
   });
 });
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: "Route not found",
-  });
-});
 
 doDaily()
 
@@ -105,9 +98,16 @@ app.use(express.static(path.join(__dirname, '../client/dist')));
 
 app.get('/*splat', (req, res) => {
   
-  console.log("Someone from "+ location.country_name + " started playing! ("+numberOfPlayersToday+" player(s) have played today.)");
+  console.log("Someone from started playing! ("+numberOfPlayersToday+" player(s) have played today.)");
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-
+  
+});
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "Route not found",
+  });
 });
 
 const PORT = process.env.PORT || 3000;
