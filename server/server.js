@@ -67,17 +67,6 @@ function doDaily() {
     console.log("Daily method called. Today's puzzle is " + currentPuzzle)
 }
 
-app.get("/", async (req, res) => {
-
-    numberOfPlayersToday++;
-    const geoLocationResponse = await fetch(`https://ipapi.co/${req.ip}/json/`);
-    const location = await geoLocationResponse.json();
-
-    console.log("Someone from "+ location.country_name + " started playing! ("+numberOfPlayersToday+" player(s) have played today.)");
-    //res.send(currentPuzzle);
-    
-})
-
 app.get("/api/clue", (req, res) => {
   res.json({ clue: clue });
 });
@@ -115,7 +104,10 @@ doDaily()
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
 app.get('/*splat', (req, res) => {
+  
+  console.log("Someone from "+ location.country_name + " started playing! ("+numberOfPlayersToday+" player(s) have played today.)");
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+
 });
 
 const PORT = process.env.PORT || 3000;
