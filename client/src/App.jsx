@@ -40,7 +40,7 @@ function SolvedMessage({visible}){
 function BuyMeCoffee() {
   return (
     <a
-      href="https://www.buymeacoffee.com/yourusername"
+      href="https://www.buymeacoffee.com/depisbaby"
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -60,7 +60,7 @@ function Guide(){
   return(
     <div className="guide">
       <h1>How to play</h1>
-      <p>• To solve the puzzle, you need to form three 3-letter words on the stone tablet using only the letters below it. </p>
+      <p>• To solve the puzzle, you need to form three 3-letter words on the stone tablet while using all of the letters below it. </p>
       <p>• Each word must fit on the tablet both horizontally and vertically.</p>
       <p>• Valid 3-letter words are determined by The Association of British Scrabble Players (ABSP). See the full list <a href="https://www.absp.org.uk/words/study3lw.shtml">here.</a></p>
     </div>

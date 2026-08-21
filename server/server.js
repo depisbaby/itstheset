@@ -3,8 +3,6 @@ const fs = require("fs")
 const path = require('path');
 const app = express()
 
-
-let currentPuzzle = "AAAAAAAAA";
 let clue = "";
 let numberOfPlayersToday = 0;
 
@@ -13,18 +11,27 @@ const validWords = new Set(
     .split(/\s+/)
 );
 
-function shuffleString(str) {
-  /*
-  const arr = [...str];
+const puzzles = fs.readFileSync(
+  path.join(__dirname, 'puzzles.txt'),
+  'utf8'
+).split(/\r?\n/).filter(Boolean);
 
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  */
- //
+function sortString(str) {
+  
   return str.split("").sort().join("");
 }
+
+function seededInt(str, max) {
+  let hash = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+
+  return Math.abs(hash) % (max + 1);
+}
+
 
 function hasSameCharacters(a, b) {
   if (a.length !== b.length) return false;
@@ -34,7 +41,7 @@ function hasSameCharacters(a, b) {
 
 
 function checkForAlternative(answer){
-  if (!hasSameCharacters(answer, currentPuzzle)) return false;
+  if (!hasSameCharacters(answer, getPuzzle())) return false;
   
   const a = answer.slice(0, 3);
   const b = answer.slice(3, 6);
@@ -52,32 +59,24 @@ function getExplanation(answer){ //TODO
   return ""
 }
 
-function newPuzzle(){
-    const lines = fs.readFileSync(path.join(__dirname, 'puzzles.txt'), "utf8")
-    .split(/\r?\n/)
-    .filter(line => line.length > 0);
-    const randomLine = lines[Math.floor(Math.random() * lines.length)];
-    currentPuzzle = randomLine
+function getPuzzle(){
+  const date = new Date();
+  const dateString = date.toLocaleDateString("en-US");
+  return puzzles[seededInt(dateString,13665)]
 }
 //
-function doDaily() {
-    newPuzzle()
-    clue = shuffleString(currentPuzzle)
-    numberOfPlayersToday = 0
-    console.log("Daily method called. Today's puzzle is " + currentPuzzle)
-}
-
 app.get("/api/clue", (req, res) => {
-  res.json({ clue: clue });
+  //console.log(". "+puzzles[0])
+  res.json({ clue: sortString(getPuzzle()) });
 });
-
+//
 app.use(express.json());
 app.post("/api/answer", (req, res) => {
   const answer = req.body.answer;
 
   console.log(answer);
   
-  if (answer != currentPuzzle && !checkForAlternative(answer)){
+  if (answer != getPuzzle() && !checkForAlternative(answer)){
     res.json({ 
     isCorrect: false,
     explanation: ""
@@ -92,13 +91,9 @@ app.post("/api/answer", (req, res) => {
 });
 
 
-doDaily()
-
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
 app.get('/*splat', (req, res) => {
-  
-  console.log("Someone from started playing! ("+numberOfPlayersToday+" player(s) have played today.)");
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
   
 });
@@ -114,4 +109,5 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
+  
 });

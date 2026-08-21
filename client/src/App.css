@@ -6,20 +6,20 @@
   background-color: rgb(255, 255, 255);
   align-items: center;
 
-  width: 500px;
-  height: 500px;
+  width: 400px;
+  height: 400px;
 
 }
 
 .tabletText {
   font-family: "Courier Prime", monospace;
   color: #8a8374;
-  font-size: 125px;
+  font-size: 100px;
   letter-spacing: 17px;
-  line-height: 100px;
+  line-height: 80px;
   text-align: left;
   font-weight: 400;
-  padding-left: 110px;
+  padding-left: 85px;
   white-space: pre-line;
 
 }
@@ -66,7 +66,7 @@
   flex-direction: column;
   font-family: "Courier Prime", monospace;
   color: #4e4e4e;
-  width: 50%;
+  width: 80%;
   text-align: center;
 }
 
@@ -75,6 +75,7 @@ h1{
   font-weight: 500;
   margin-bottom: 0px;
   line-height: 50px;
+  margin-bottom: 20px;
 }
 
 p{
@@ -88,29 +89,32 @@ p{
   flex-direction: row;
   gap: 8px;
   align-items: center;
+  justify-content: space-evenly;
   flex-wrap: wrap;
   width: 80%;
   margin-bottom: 50px;
 }
 
 .letter-buttons button {
-  width: 100px;
-  height: 100px;
+  width: 70px;
+  height: 70px;
   font-family: "Courier Prime", monospace;
-  font-size: 100px;
+  font-size: 60px;
   border-radius: 8px;
-  border: 0px;
+  border: 0;
   background: #9c9c9c;
   color: #ffffff;
   font-weight: 500;
-  
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.letter-buttons button:hover {
-  background: #cccccc;
-  transform: translateY(-20px);
+/* Only apply hover effects on devices with real hover */
+@media (hover: hover) {
+  .letter-buttons button:hover {
+    background: #cccccc;
+    transform: translateY(-20px);
+  }
 }
 
 .letter-buttons button:active {
