@@ -1,8 +1,7 @@
 const express = require('express')
 const fs = require("fs")
-const cron = require('node-cron')
+const path = require('path');
 const app = express()
-app.set('view engine', 'ejs')
 
 
 let currentPuzzle = "AAAAAAAAA";
@@ -75,7 +74,7 @@ app.get("/", async (req, res) => {
     const location = await geoLocationResponse.json();
 
     console.log("Someone from "+ location.country_name + " started playing! ("+numberOfPlayersToday+" player(s) have played today.)");
-    res.send(currentPuzzle);
+    //res.send(currentPuzzle);
     
 })
 
@@ -110,11 +109,17 @@ app.use((req, res) => {
     message: "Route not found",
   });
 });
-//
-cron.schedule('0 0 * * *', () => {
-  doDaily();
-});
 
 doDaily()
 
-app.listen(3000)
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+app.get('/*splat', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
+});
