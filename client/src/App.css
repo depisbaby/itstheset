@@ -5,7 +5,6 @@
   background-size: cover;
   background-color: rgb(255, 255, 255);
   align-items: center;
-
   width: 400px;
   height: 400px;
 
@@ -47,18 +46,21 @@
   font-size: 40px;
   text-align: center;
   background: #ffffff;
-  width: 100%;
+  width: 60%;
   height: 0px;
   margin-top: -0px;
-  color: green;
+  color: #4e4e4e;
   width: 70%;
+  white-space: pre-line;
 }
 
 .solvedMessage.show{
   opacity: 1;
   visibility: visible;
   height: 50%;
-  margin-top: -30px;
+  width: 60%;
+  margin-top: -100px;
+  margin-bottom: 50px;
 }
 
 .guide{
@@ -66,7 +68,7 @@
   flex-direction: column;
   font-family: "Courier Prime", monospace;
   color: #4e4e4e;
-  width: 80%;
+  width: 60%;
   text-align: center;
 }
 
@@ -93,6 +95,7 @@ p{
   flex-wrap: wrap;
   width: 80%;
   margin-bottom: 50px;
+  margin-top: -50px;
 }
 
 .letter-buttons button {
@@ -122,3 +125,25 @@ p{
   transform: translateY(0);
 }
 
+.trialPips{
+  font-size: 100px;
+  letter-spacing: 10px;
+  font-weight: 500;
+  line-height: 50px;
+  margin-bottom: 100px;
+  color: #4e4e4e;
+}
+
+.submitButton{
+  width: 70px;
+  height: 70px;
+  font-family: "Courier Prime", monospace;
+  font-size: 60px;
+  border-radius: 8px;
+  border: 0;
+  background: #9c9c9c;
+  color: #ffffff;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}

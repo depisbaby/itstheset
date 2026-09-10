@@ -4,7 +4,10 @@ import tabletImage from "./assets/tablet.png";
 let _clue = ""
 let inserted = ""
 let insertedVisible = ""
-let _solved = false
+let _completed = false
+let trialsRemaining = 3
+let explanation = ""
+let completionText = ""
 
 function subtractStrings(str1, str2) {
   const chars = [...str1];
@@ -28,11 +31,11 @@ function Tablet({text}){
   );
 }
 
-function SolvedMessage({visible}){
+function SolvedMessage({visible, text}){
   return (
     <div className={`solvedMessage ${visible ? "show" : ""}`}>
-      <h1>You solved the puzzle!</h1>
-      <p>There will be a new puzzle tomorrow, see you then. Consider buying me a coffee to keep this game online.</p>
+      <h1>{completionText}</h1>
+      <p>{explanation}</p>
     </div>
   )
 }
@@ -82,21 +85,30 @@ function LetterButtons({ text, onLetterClick }) {
   );
 }
 
+function TrialPips({ trialsRemaining }) {
+  const count = Math.max(0, Math.min(3, trialsRemaining));
+
+  return <span className="trialPips">{'•'.repeat(count)}</span>;
+}
+
+
 function App({clue}) {
 
   _clue = clue
   const [tabletText, setTabletText] = useState("ITS\nTHE\nSET");
-  const [solved, setSolved] = useState(false);
+  const [completed, setCompleted] = useState(false);
 
   function EraseLetter(){
-    if (_solved) return;
+    if (_completed) return;
+    if (trialsRemaining == 0) return;
     if (inserted.length == 0)return;
     inserted = inserted.slice(0,-1)
     UpdateTablet()
   }
 
   function InsertLetter(letter){
-    if (_solved) return;
+    if (_completed) return;
+    if (trialsRemaining == 0) return;
     if (inserted.length == 6)return;
 
     if (!/^[a-zA-Z]$/.test(letter))return;
@@ -106,6 +118,7 @@ function App({clue}) {
   }
 
   async function SendAnswer(answer){
+    trialsRemaining--;
     const response = await fetch("/api/answer", {
       method: "POST",
       headers: {
@@ -113,14 +126,23 @@ function App({clue}) {
       },
       body: JSON.stringify({
         answer: answer,
+        trialsRemaining: trialsRemaining,
       }),
     });
 
     const data = await response.json();
     console.log(data.isCorrect);
     if(data.isCorrect){
-      setSolved(true)
-      _solved = true
+      explanation = data.explanation;
+      completionText = "You got it! See you tomorrow."
+      _completed = true
+      setCompleted(true)
+    }
+    else if(!data.isCorrect && data.explanation != ""){ //ran out of trials
+      explanation = data.explanation;
+      completionText = "You ran out of trials! See you tomorrow."
+      _completed = true
+      setCompleted(true)
     }
   }
 
@@ -163,6 +185,7 @@ function App({clue}) {
         displayed = inserted[0] + inserted[1] + inserted[2] + "\n" + inserted[1] + inserted[3] + inserted[4] + "\n" + inserted[2] + inserted[4] + inserted[5]
         answer = inserted[0] + inserted[1] + inserted[2] + inserted[1] + inserted[3] + inserted[4] + inserted[2] + inserted[4] + inserted[5]
         insertedVisible = answer
+
         SendAnswer(answer)
         
         break;
@@ -195,10 +218,12 @@ function App({clue}) {
     };
   }, []);
 
+
   return (
   <div className="page">
     <Tablet text={tabletText}/>
-    <SolvedMessage visible={solved}/>
+    <TrialPips trialsRemaining={trialsRemaining}/>
+    <SolvedMessage visible={completed}/>
     <LetterButtons
       text={"<"+subtractStrings(clue, insertedVisible)}
       onLetterClick={(letter, index) => {

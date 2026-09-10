@@ -16,6 +16,11 @@ const puzzles = fs.readFileSync(
   'utf8'
 ).split(/\r?\n/).filter(Boolean);
 
+const explanations = fs.readFileSync(
+  path.join(__dirname, 'scrabble_words.txt'),
+  'utf8'
+).split(/\r?\n/).filter(Boolean);
+
 function sortString(str) {
   
   return str.split("").sort().join("");
@@ -56,7 +61,26 @@ function checkForAlternative(answer){
 }
 
 function getExplanation(answer){ //TODO
-  return ""
+  let explanation = "";
+  const a = answer.slice(0, 3);
+  const b = answer.slice(3, 6);
+  const c = answer.slice(6, 9);
+
+  for (let i = 0; i < explanations.length; i++) {
+    if(explanations[i].slice(0, 3).toUpperCase() == a){
+      explanation = explanation + explanations[i].slice(0, 3).toUpperCase() + "\n" + explanations[i].slice(4) + "\n\n"
+    }
+
+    if(explanations[i].slice(0, 3).toUpperCase() == b){
+      explanation = explanation + explanations[i].slice(0, 3).toUpperCase() + "\n" + explanations[i].slice(4) + "\n\n"
+    }
+
+    if(explanations[i].slice(0, 3).toUpperCase() == c){
+      explanation = explanation + explanations[i].slice(0, 3).toUpperCase() + "\n" + explanations[i].slice(4) + "\n\n"
+    }
+  }
+
+  return explanation
 }
 
 function getPuzzle(){
@@ -73,10 +97,20 @@ app.get("/api/clue", (req, res) => {
 app.use(express.json());
 app.post("/api/answer", (req, res) => {
   const answer = req.body.answer;
+  const trialsRemaining = req.body.trialsRemaining;
 
   console.log(answer);
   
   if (answer != getPuzzle() && !checkForAlternative(answer)){
+    
+    if(trialsRemaining == 0){
+      res.json({ 
+      isCorrect: false,
+      explanation: getExplanation(getPuzzle())
+      });
+      return
+    }
+    
     res.json({ 
     isCorrect: false,
     explanation: ""
@@ -86,7 +120,7 @@ app.post("/api/answer", (req, res) => {
 
   res.json({ 
     isCorrect: true,
-    explanation: getExplanation()
+    explanation: getExplanation(answer)
   });
 });
 
